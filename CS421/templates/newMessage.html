@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Healtchare</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='js/script.js') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  </head>
+
+  <body class="siteBackground">
+    {% extends "index.html"%}
+    {% block content %}
+
+    <div class="newMessage-header">
+      <div class="newMheader">
+        <h1><p> Secure Messages </p></h1>
+      </div>
+      <br>
+<!--
+    <div class="topBox">
+
+      <div class="dropDown">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Department
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#"></a>
+            <a class="dropdown-item" href="#">Nursing</a>
+            <a class="dropdown-item" href="#">Pharmacy</a>
+            <a class="dropdown-item" href="#">Radiology</a>
+            <a class="dropdown-item" href="#">Cardiology/a>
+
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Separated link</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <div class="input-group" id="search-box">
+          <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+            aria-describedby="search-addon" />
+          <button type="button" class="btn btn-outline-primary">search</button>
+        </div>
+      </div>
+-->
+
+    <div class="crMessage">
+      <p> Compose Message</p>
+      <form action="./newMessage"class="form-inline" method="POST">
+
+        <label for="exampleFormControlSelect1">Recipiant Name</label>
+        <input type="text" name="rName" class="form-control" id="formGroupExampleInput" placeholder="Recipiant Name">
+
+        <label for="formGroupExampleInput"> Subject </label>
+        <br>
+        <input type="text" name="subj" class="form-control" id="formGroupExampleInput" placeholder="Subject">
+        <br>        
+        <label for="exampleFormControlTextarea1"> Message </label>
+        <textarea class="form-control" name="mes" id="exampleFormControlTextarea1" rows="3"></textarea>
+
+        <input type="submit" value="Submit">
+      </form>
+
+    </div>
+    <br>
+    <div class="emList">
+      <form action="" class="buttons" methods="get">
+        <button type="submit" class="btn btn-info"> <a href="{{url_for('list_all')}}">Directory</a></button>
+      </form>
+    </div>
+
+    <br>
+
+
+    {% endblock %}
+
+  </div>
+</body>

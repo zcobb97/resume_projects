@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Healtchare</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='js/script.js') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+  </head>
+
+  <body class="siteBackground">
+    {% extends "index.html"%}
+    {% block content %}
+
+    <div class="message-display">
+      <div class="mheader">
+        <h1><p> John Smith </p></h1>
+        <h2> <b>Department: </b> Nursing </h2>
+      </div>
+      <br>
+      <div class="MessageBox">
+        <table>
+
+            <tr>
+              <th>Contact</th>
+              <th>Subject</th>
+              <th>Message</th>
+            </tr>
+            <tr>
+              <td>Robert California</td>
+              <td>Testing Results</td>
+              <td> We have received your results, please contact
+                  us as soon as possible.</td>
+            </tr>
+
+            <tr>
+              <td>Michael Myers</td>
+              <td>Surgery Reminder</td>
+              <td> Good afternoon Mr. Milk, this is a friendly reminder that
+              next Wednesday will be the day we perform surgery.</td>
+            </tr>
+
+
+        </table>
+        {% endblock %}
+
+    </body>
+  </html>

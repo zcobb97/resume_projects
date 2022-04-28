@@ -1,0 +1,167 @@
+
+{% extends "index.html" %}
+
+{% block content %}
+
+<BR><BR>
+<form target="_self" action="patientSearchCriteria" method="post">
+<div class="row">
+  <div class="col-4">
+
+
+      <div class=" form-floating mb-3">
+        <input id="searchText" name="searchText" type="text" class="form-control" placeholder="searchText">
+        <label for="searchText">Patient Search Text</label>
+      </div>
+
+
+
+
+  </div>
+    <div class="col-2">
+        <div class=" form-floating mb-3">
+            <input id="searchDob" name="searchDob" type="text" class="form-control" placeholder="searchDob">
+            <label for="searchDob">Date of Birth</label>
+        </div>
+    </div>
+    <div class="col-2 ">
+
+
+        <input type="radio" name="searchGender" value="male" class="form-check-input">
+        <label for="searchGender" class="form-check-label">Male</label><BR>
+        <input type="radio" name="searchGender" value="female" class="form-check-input">
+        <label for="searchGender" class="form-check-label">Female</label><BR>
+        <input type="radio" name="searchGender" value="any" class="form-check-input" checked>
+        <label for="searchGender" class="form-check-label">Any</label>
+
+    </div>
+
+
+</div>
+<div class="row">
+
+    <div class="col-2 paddingTop ">
+        <button id="searchButton" type="submit" class="paddingTop btn btn-primary">Search</button>
+    </div>
+</div>
+
+
+</form>
+
+
+        {%for thisPatient in searchResults %}
+
+        <div class="row " >
+          <div class="col-4 paddingTop">
+            <form target="_self" action="patientSelectSubmit" method="post">
+              <input type="hidden" value="{{thisPatient[0]}}" name="patientId"/>
+
+              <button id="{{thisPatient[1]}}" type="submit" class="paddingTop btn btn-primary">{{thisPatient[1]}}</button>
+
+            </form>
+
+          </div>
+            <div class="col-4 paddingTop">
+            {{ thisPatient[2] }}
+            </div>
+
+        {% endfor %}
+
+<!--
+      <div class="row justify-content-md-center" id="insurance1div">
+        <div class="col-2">
+          <p class="fs-6">Dental</p>
+        </div>
+        <div class="col-3">
+          <p class="fs-6">Delta</p>
+        </div>
+        <div class="col-2">
+          <p class="fs-6">G32435/X</p>
+        </div>
+        <div class="col-5">
+          <button id="insurance1button" onclick="insurance1buttonClick()" type="button" class="btn btn-primary btn-sm">Edit</button>
+          <button type="button" class="btn btn-primary btn-sm" disabled>Remove</button>
+          <button id="claims1button" onclick="navigateClaims(1)" type="button" class="btn btn-primary btn-sm">Claims</button>TODO NEED TO MAKE
+        </div>
+        <div id="insurance1Editdiv" class="hiddenSection">
+        HERE WE HAVE STUFF TO EDIT THE INSURANCE ... or maybe a modal? ... and/or disable the buttons?
+        <button id="insurance1Savebutton" onclick="reloadPageClick()" type="button" class="btn btn-primary btn-sm">Save</button>
+        </div>
+
+      </div>
+
+        <div class="row justify-content-md-center" id="insurance2div">
+          <div class="col-2">
+            <p class="fs-6">Health</p>
+          </div>
+          <div class="col-3">
+            <p class="fs-6">BCBS PPO</p>
+          </div>
+          <div class="col-2">
+            <p class="fs-6 text-truncate">J08123-YIAL-19230-3</p>
+          </div>
+          <div class="col-5">
+            <button id="insurance2button" onclick="insurance2buttonClick()" type="button" class="btn btn-primary btn-sm">Edit</button>
+            <button type="button" class="btn btn-primary btn-sm" disabled>Remove</button>
+            <button id="claims2button" onclick="navigateClaims(2)" type="button" class="btn btn-primary btn-sm">Claims</button>BETTER USE OF
+          </div>
+
+      </div>
+
+      <div class="row justify-content-md-center" id="insurance3div">
+        <div class="col-2">
+          <p class="fs-6">Precription</p>
+        </div>
+        <div class="col-3">
+          <p class="fs-6">QuickScripts</p>
+        </div>
+        <div class="col-2">
+          <p class="fs-6 text-truncate">WAC-919</p>
+        </div>
+        <div class="col-5">
+          <button id="insurance3button" onclick="insurance2buttonClick()" type="button" class="btn btn-primary btn-sm">Edit</button>
+          <button type="button" class="btn btn-primary btn-sm" disabled>Remove</button>
+          <button id="claims3button" onclick="navigateClaims(3)" type="button" class="btn btn-primary btn-sm">Claims</button>REAL ESTATE
+        </div>
+
+    </div>
+
+      <div id="insuranceAddButtondiv">
+      <div class="row justify-content-md-center" id="">
+        <div class="col-7">
+        </div>
+        <div class="col-5">
+          <button id="insuranceAddbutton" onclick="insuranceAddbuttonClick()" type="button" class="btn btn-primary btn-sm"> Add Insurance Provider </button>
+        </div>
+      </div>
+    </div>
+
+      <div id="insuranceAddSavediv" class="hiddenSection">
+      <div class="row justify-content-md-center hiddenSection" id="asd">
+        <div class="col-2">
+          <div class=" form-floating mb-3">
+            <input id="addType" type="text" class="form-control" placeholder="Type">
+            <label for="addType">Type</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class=" form-floating mb-3">
+            <input id="addProvider" type="text" class="form-control" placeholder="Provider">
+            <label for="addProvider">Provider</label>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class=" form-floating mb-3">
+            <input id="addGroup" type="text" class="form-control" placeholder="Group or Family">
+            <label for="addGroup">Group or Family</label>
+          </div>
+        </div>
+        <div class="col-5">
+          <button onclick="insuranceAddSaveButtonClick()" type="button" class="btn btn-primary btn-sm">Save</button>
+          <button onclick="insuranceAddClearButtonClick()" type="button" class="btn btn-primary btn-sm">Clear</button>
+        </div>
+      </div>
+    </div>
+    </div>
+-->
+{% endblock %}

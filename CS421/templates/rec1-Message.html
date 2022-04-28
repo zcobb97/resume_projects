@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Healtchare</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='js/script.js') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  </head>
+  {% extends "index.html"%}
+
+  {% block content %}
+  <style>
+  .text-box {
+    border: 3px solid #101010;
+    height: 500px;
+    width: 100%;
+    padding-left: 20px;
+  }
+  .commentBox {
+    width: 50%;
+    float: left;
+    padding-right: 5px;
+  }
+
+  .postButtons {
+    height: 10%;
+    width: 20%;
+  }
+
+  </style>
+
+  <body class="siteBackground">
+
+    <div class="message-display">
+      <div class="container-fluid">
+      <br>
+      <br>
+
+    <div class="text-box">
+
+      <div class="commentBox">
+        <h2> Message </h2>
+        ______________________________________________
+        <textarea class="form-control" name="msg" id="comment" rows="3"></textarea>
+      </div>
+      <br><br><br><br><br>
+      <div class="postButtons">
+        <button type="button" class="btn btn-success" id="addCommentButton"
+        value="addComment" onclick="addComment();">Send</button>
+      </div>
+      <br><br>
+
+    <p id= "Result"></p>
+    <script type="text/javascript">
+      var index = 0;
+      var comments = Array();
+      function addComment()
+      {
+        comments[index] = document.getElementById("comment").value;
+        index++;
+        document.getElementById("comment").value = "";
+        var e = "<hr/>";
+        for (var i=0; i<comments.length; i++)
+        {
+          e += "You: "+ comments[i] + "<br/>";
+        }
+        document.getElementById("Result").innerHTML = e;
+      }
+
+    </script>
+  </div>
+
+
+  {% endblock %}
+
+</body>
+</html>

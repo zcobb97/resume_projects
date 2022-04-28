@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Insurance wireframe</title>
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+        <link rel= "stylesheet" type= "text/javascript" href= "{{ url_for('static',filename='js/script.js') }}">
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+        <link rel= "stylesheet" type= "text/javascript" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body class="siteBackground">
+        <br><br>
+        <form class="form-inline" action="{{url_for('historyDisplay')}}" method="GET">
+            <div class="form-group">
+                <label for="social_security">Enter your social security number to see your patient history.</label>
+                <br><br>
+                <input type="text" name="social-security" placeholder="000-00-0000" style="width: 300px;" class="form-control" required>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Enter</button>
+        </form>
+    </body>
+</html>

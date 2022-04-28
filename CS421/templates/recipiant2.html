@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Healtchare</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='js/script.js') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+</head>
+
+  <body class="siteBackground">
+    {% extends "index.html"%}
+    {% block content %}
+    <div class="message-display">
+      <div class="container-fluid">
+
+      <div class="mheader">
+        <h1><p> Bob Vance </p></h1>
+        <h2> <b>Department: </b> Radiology </h2>
+      </div>
+      <br>
+      <div class="MessageBox">
+        <table>
+
+            <tr>
+              <th>Contact</th>
+              <th>Subject</th>
+              <th>Message</th>
+            </tr>
+            <tr>
+              <td>Robert California</td>
+              <td>Testing Results</td>
+              <td> We have received your results, please contact
+                  us as soon as possible.</td>
+            </tr>
+
+        </table>
+
+      </div>
+      </div>
+      {% endblock %}
+
+    </body>
+</html>

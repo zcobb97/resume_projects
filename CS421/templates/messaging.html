@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Healtchare</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='js/script.js') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body class="siteBackground">
+
+
+{% extends "index.html"%}
+{% block content %}
+
+  <div class="outterBox">
+    <div class="upper-header">
+      <h1> Secure Messages</h1>
+      ______________________________________________
+    </div>
+    <br>
+    <div class="messages-layout">
+
+    <div class="container-fluid">
+
+      <header class="header">
+        <!-- NEW MESSAGE -->
+        <button type="button" class="btn btn-info"> <a href="{{url_for('newMessage')}}"> New Message </a></button>
+
+      </header>  <br>
+      <div class="MessageBox" method="POST">
+        <table>
+
+            <tr>
+              <th>Contact</th>
+              <th>Subject</th>
+            </tr>
+            <tr>
+              {% for message in all_messages %}
+              <td>
+                <a href="{{url_for('rec1Message')}}">
+                  {{message.rName}}
+                </a>
+              </td>
+              <td>{{message.subj}}</td>
+            </tr>
+              {% endfor %}
+
+        </table>
+      </div>
+
+      <!--
+      <section class="contact-lib">
+        <div class="container-fluid">
+          <table class="table" border="1" style="width: 100%; margin-top: 20px; text-align: center;">
+            <thead>
+              <tr>
+                <th scope="col">Contacts</th>
+              </tr>
+            </thead>
+          <!--  List of Contacts Appears
+            <tr>
+                <td>
+                <a href="{{url_for('recipiant1')}}">
+                <ul class="contact-item">
+                  <p class="contactName"> <b>Michael Scott</b> </p>
+                  <p class="Department"> Anesthesiology</p>
+                </ul>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+              <a href="{{url_for('recipiant2')}}">
+              <ul class="contact-item">
+                <p class="contactName"><b>Bob Vance</b> </p>
+                <p class="Department"> Radiology</p>
+              </ul>
+            </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <a href="{{url_for('recipiant3')}}">
+              <ul class="contact-item">
+                <p class="contactName"> <b>John Smith</b></p>
+                <p class="Department"> Nursing</p>
+              </ul>
+            </a>
+            </td>
+          </tr>
+
+
+      </table>
+      </section>
+            -->
+
+      <!-- TURN THIS TO A FLASK CALL -->
+      <div class="message-box" id="messageContent">
+        <iframe class="messPanel" id="commContent" scrolling="no" width="100%" height="100%"></iframe>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+</div>
+</div>
+{% endblock %}
+
+
+</body>
+</html>

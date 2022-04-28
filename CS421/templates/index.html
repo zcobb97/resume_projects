@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Healthcare Website</title>
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
+  <link rel="stylesheet" type="text/css" href="../static/bootstrap-5.0.2-dist/css/bootstrap.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../static/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+<script type="text/javascript" src="../static/script.js"></script>
+<body class="siteBackground">
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">login Results</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="loginModalContent">
+
+        <div class="row">
+          <div class="col-8">
+            Please log in:
+            <div class=" form-floating mb-3">
+              <input id="usernameInput" type="text" class="form-control" placeholder="usernameInput">
+              <label for="usernameInput">User Name</label>
+            </div>
+            <div class=" form-floating mb-3">
+              <input id="passwordInput" type="password" class="form-control" placeholder="passwordInput">
+              <label for="passwordInput">Password</label>
+            </div>
+            <div><p id="loginMessage" class="redText"></p>
+              <!--dynamic content-->
+            </div>
+          </div>
+        </div>
+        <div class="hiddenSection">
+          <!--Login modal display button hidden to make it easier to button.click()-->
+          <button id="showLoginModalButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+            Show Login Modal
+          </button>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="loginSubmitButton" class="btn btn-primary">Log In</button>
+        <button type="button" id="dismissLoginModalButton"    class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="/newUser" class="btn btn-primary" id="newUserButton">New User</a>
+      </div>
+    </div>
+  </div>
+</div><!-- end log in modal -->
+
+<div id="completeWrapper" class="completeWrapper container">
+
+<div id="topRibbonWrapper" class="row topRibbon container justify-content-md-center">
+  <div id="container" class="row  ">
+    {% include "partials/topRibbon.html" %}
+
+    </div>
+
+</div> <!-- topRibbonWrapper -->
+
+
+<div class="row " id="navAndContentRow">
+
+
+
+    {% include "partials/navPanel.html" %}
+
+
+
+<!-- this is where the ifram used to be -->
+  <div class="col-10" id="mainPageContent">
+  {% block content %}
+
+  {% endblock %}
+  </div>
+
+
+</div> <!-- navAndContentRow -->
+
+</div> <!-- completeWrapper -->
+
+</body>

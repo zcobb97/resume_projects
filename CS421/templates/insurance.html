@@ -1,0 +1,175 @@
+
+{% extends "index.html" %}
+
+{% block content %}
+    <BR><BR>
+    <div class="">
+      <div class="row justify-content-md-center">
+        <div class="col-2 h2">
+          Type
+        </div>
+        <div class="col-3 h2">
+          Provider
+        </div>
+        <div class="col-4 h2">
+          Group/family
+        </div>
+        <div class="col-3 h2">
+
+        </div>
+      </div>
+
+
+      {%for thisInsurance in insurances %}
+
+      <div class="row justify-content-md-center" >
+
+        <div class="col-2">
+          <p class="fs-6">{{thisInsurance[0]}}</p>
+        </div>
+        <div class="col-3">
+          <p class="fs-6">{{thisInsurance[1]}}</p>
+        </div>
+        <div class="col-4">
+          <p class="fs-6 text-truncate">{{thisInsurance[2]}}</p>
+        </div>
+        <div class="col-3">
+            <form action="deleteInsurance" method="post" target="_self">
+                <input name="insuranceId" type="hidden" value="{{ thisInsurance[3] }}">
+          <button type="submit" class="btn btn-primary btn-sm" >Remove</button>
+            </form>
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+      <BR><BR><BR><b>Add new insurance:</b><BR><BR>
+
+      <form action="insuranceAdd" method="post" target="_self">
+      <div class="row justify-content-md-center " id="">
+        <div class="col-2">
+          <div class=" form-floating mb-3">
+            <input name="addType" id="addType" type="text" class="form-control" placeholder="Type">
+            <label for="addType">Type</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class=" form-floating mb-3">
+            <input name="addProvider" id="addProvider" type="text" class="form-control" placeholder="Provider">
+            <label for="addProvider">Provider</label>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class=" form-floating mb-3">
+            <input name="addGroup" id="addGroup" type="text" class="form-control" placeholder="Group or Family">
+            <label for="addGroup">Group or Family</label>
+          </div>
+        </div>
+        <div class="col-3 paddingTop">
+          <button type="submit" class="btn btn-primary btn-sm">Add Insurance</button>
+          <button onclick="insuranceAddClearButtonClick()" type="button" class="btn btn-primary btn-sm">Clear</button>
+        </div>
+      </div>
+      </form>
+    </div>
+
+<!--
+
+      <div class="row justify-content-md-center" id="insurance1div">
+        <div class="col-2">
+          <p class="fs-6">Dental</p>
+        </div>
+        <div class="col-3">
+          <p class="fs-6">Delta</p>
+        </div>
+        <div class="col-2">
+          <p class="fs-6">G32435/X</p>
+        </div>
+        <div class="col-5">
+          <button id="insurance1button" onclick="insurance1buttonClick()" type="button" class="btn btn-primary btn-sm">Edit</button>
+          <button type="button" class="btn btn-primary btn-sm" disabled>Remove</button>
+          <button id="claims1button" onclick="navigateClaims(1)" type="button" class="btn btn-primary btn-sm">Claims</button>TODO NEED TO MAKE
+        </div>
+        <div id="insurance1Editdiv" class="hiddenSection">
+        HERE WE HAVE STUFF TO EDIT THE INSURANCE ... or maybe a modal? ... and/or disable the buttons?
+        <button id="insurance1Savebutton" onclick="reloadPageClick()" type="button" class="btn btn-primary btn-sm">Save</button>
+        </div>
+
+      </div>
+
+        <div class="row justify-content-md-center" id="insurance2div">
+          <div class="col-2">
+            <p class="fs-6">Health</p>
+          </div>
+          <div class="col-3">
+            <p class="fs-6">BCBS PPO</p>
+          </div>
+          <div class="col-2">
+            <p class="fs-6 text-truncate">J08123-YIAL-19230-3</p>
+          </div>
+          <div class="col-5">
+            <button id="insurance2button" onclick="insurance2buttonClick()" type="button" class="btn btn-primary btn-sm">Edit</button>
+            <button type="button" class="btn btn-primary btn-sm" disabled>Remove</button>
+            <button id="claims2button" onclick="navigateClaims(2)" type="button" class="btn btn-primary btn-sm">Claims</button>BETTER USE OF
+          </div>
+
+      </div>
+
+      <div class="row justify-content-md-center" id="insurance3div">
+        <div class="col-2">
+          <p class="fs-6">Precription</p>
+        </div>
+        <div class="col-3">
+          <p class="fs-6">QuickScripts</p>
+        </div>
+        <div class="col-2">
+          <p class="fs-6 text-truncate">WAC-919</p>
+        </div>
+        <div class="col-5">
+          <button id="insurance3button" onclick="insurance2buttonClick()" type="button" class="btn btn-primary btn-sm">Edit</button>
+          <button type="button" class="btn btn-primary btn-sm" disabled>Remove</button>
+          <button id="claims3button" onclick="navigateClaims(3)" type="button" class="btn btn-primary btn-sm">Claims</button>REAL ESTATE
+        </div>
+
+    </div>
+
+      <div id="insuranceAddButtondiv">
+      <div class="row justify-content-md-center" id="">
+        <div class="col-7">
+        </div>
+        <div class="col-5">
+          <button id="insuranceAddbutton" onclick="insuranceAddbuttonClick()" type="button" class="btn btn-primary btn-sm"> Add Insurance Provider </button>
+        </div>
+      </div>
+    </div>
+
+      <div id="insuranceAddSavediv" class="hiddenSection">
+      <div class="row justify-content-md-center hiddenSection" id="asd">
+        <div class="col-2">
+          <div class=" form-floating mb-3">
+            <input id="addType" type="text" class="form-control" placeholder="Type">
+            <label for="addType">Type</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class=" form-floating mb-3">
+            <input id="addProvider" type="text" class="form-control" placeholder="Provider">
+            <label for="addProvider">Provider</label>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class=" form-floating mb-3">
+            <input id="addGroup" type="text" class="form-control" placeholder="Group or Family">
+            <label for="addGroup">Group or Family</label>
+          </div>
+        </div>
+        <div class="col-5">
+          <button onclick="insuranceAddSaveButtonClick()" type="button" class="btn btn-primary btn-sm">Save</button>
+          <button onclick="insuranceAddClearButtonClick()" type="button" class="btn btn-primary btn-sm">Clear</button>
+        </div>
+      </div>
+    </div>
+    </div>
+-->
+{% endblock %}

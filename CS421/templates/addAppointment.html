@@ -1,0 +1,51 @@
+
+{% extends "index.html" %}
+
+{% block content %}
+    <BR>
+    <form action="addAppointmentSubmit" method="post" target="_self">
+
+        <div class="row " id="">
+            <div class="col-3">
+                Current Julian Date: {{ julianDate }}
+            </div>
+        </div>
+        <BR><BR>
+
+        <div class="row " id="">
+            <div class="col-2">
+                <div class=" form-floating mb-3">
+                    <input name="appointmentDate" id="appointmentDate" type="text" class="form-control" placeholder="appointmentDate">
+                    <label for="appointmentDate">Julian Date</label>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class=" form-floating mb-3">
+                    <input name="appointmentTime" id="appointmentTime" type="text" class="form-control" placeholder="appointmentTime">
+                    <label for="appointmentTime">Time of Day</label>
+                </div>
+            </div>
+        </div>
+        <div class="row " id="">
+            <div class="col-4">
+                <div class=" form-floating mb-3">
+                    <input name="patientName" id="patientName" type="text" class="form-control" placeholder="patientName">
+                    <label for="patientName">Patient Name</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class=" form-floating mb-3">
+                    <input name="providerName" id="providerName" type="text" class="form-control" placeholder="providerName">
+                    <label for="providerName">Provider Name</label>
+                </div>
+            </div>
+        </div>
+        <div class="row " id="">
+            <div class="col-3 paddingTop">
+                <button type="submit" class="btn btn-primary btn-sm">Add To Schedule</button>
+            </div>
+        </div>
+    </form>
+    </div>
+
+{% endblock %}

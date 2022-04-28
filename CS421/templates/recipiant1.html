@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Healtchare</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='js/script.js') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap-5.0.2-dist/js/bootstrap.js') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+  </head>
+
+  <body class="siteBackground">
+    {% extends "index.html"%}
+    {% block content %}
+
+    <div class="message-display">
+      <div class="container-fluid">
+
+      <div class="mheader">
+        <h1><p> Michael Scott </p></h1>
+        <h2> <b>Department: </b> Anesthesiology </h2>
+      </div>
+      <br>
+      <div class="MessageBox">
+        <table>
+
+            <tr>
+              <th>Contact</th>
+              <th>Subject</th>
+              <th>Message</th>
+            </tr>
+            <tr>
+              {% for message in all_messages %}
+              <td>
+                <a href="{{url_for('rec1Message')}}">
+                  {{message.rName}}
+                </a>
+              </td>
+              <td>{{message.rName}}</td>
+              <td>{{message.subj}}</td>
+              <td>{{message.mes}}</td>
+            </tr>
+
+
+          {% endfor %}
+
+        </table>
+
+      </div>
+      </div>
+    {% endblock %}
+
+    </body>
+</html>

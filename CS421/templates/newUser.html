@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Insurance wireframe</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap-5.0.2-dist/css/bootstrap.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../static/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+<script type="text/javascript" src="../static/script.js"></script>
+<body class="siteBackground">
+<BR><BR><BR>
+<div class="row" id="">
+    <div class="col-1">
+    </div>
+    <div class="col-11">
+        <h1>{{ userAdded }}</h1>
+    </div>
+</div>
+
+<div class="row" id="">
+    <div class="col-1">
+    </div>
+    <div class="col-11">
+        <h1>Enter New User Information And Either patient or provider</h1>
+    </div>
+</div>
+
+<form action="newUserSubmit" method="post" target="_self">
+    <div class="row justify-content-md-center" id="">
+        <div class="col-1">
+        </div>
+
+        <div class="col-4">
+            <div class=" form-floating mb-3">
+                <input name="name" id="name" type="text" class="form-control" placeholder="name">
+                <label for="name">Name</label>
+            </div>
+        </div>
+        <div class="col-6">
+        </div>
+    </div>
+    <div class="row justify-content-md-center " id="">
+        <div class="col-1">
+        </div>
+        <div class="col-3">
+            <div class=" form-floating mb-3">
+                <input name="username" id="username" type="text" class="form-control" placeholder="username">
+                <label for="username">User Name</label>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class=" form-floating mb-3">
+                <input name="password" id="password" type="text" class="form-control" placeholder="password">
+                <label for="password">Password</label>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class=" form-floating mb-3">
+                <input value="patient" name="userType" id="userType" type="text" class="form-control" placeholder="userType">
+                <label for="userType">User Type</label>
+            </div>
+        </div>
+        <div class="col-2">
+
+        </div>
+    </div>
+    <div class="row" id="">
+        <div class="col-2">
+        </div>
+
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-lg">Add This User</button>
+        </div>
+    </div>
+    <BR><BR><BR><BR>
+    <div class="row" id="">
+        <div class="col-2">
+        </div>
+
+        <div class="col-4">
+            <a href="/" class="btn btn-primary" id="selectPatientButton">Return to App</a>
+        </div>
+    </div>
+</form>
+
+
+
+</body>
+

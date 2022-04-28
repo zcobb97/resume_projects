@@ -1,0 +1,212 @@
+
+{% extends "index.html" %}
+
+{% block content %}
+
+    <form method="post" action="formProcess" target="_self">
+    <p>Have you ever visited us before?</p>
+    <div>
+      <div class="row">
+        <div class="col-2">
+          <input type="radio" name="visit" value="yes" class="form-check-input"  {% if patientHistory[1] == "yes" %} checked {% endif %}>
+          <label for="visitation" class="form-check-label">yes</label>
+          <input type="radio" name="visit" value="no" class="form-check-input"  {% if patientHistory[1] == "no" %} checked {% endif %}>
+          <label for="visitation" class="form-check-label">no</label>
+        </div>
+      </div>
+    </div>
+   <br>
+
+   <div class="form-inline">
+     <div class="form-group" style="display: flex;">
+      <label for="lastvisit">If so, please provide the date of your visit, write N/A if you've never visited:</label>
+      <input value="{{ patientHistory[2] }}" type="text" name="lastvisit" placeholder="Last Visit" class="form-control" style="width: 150px;"><br><br>
+     </div>
+   </div><br>
+
+    <p>Please look over the health conditions and write below which ones apply to you.</p>
+    <h2>Health Conditions</h2>
+    <div>
+      <div class="row">
+          <div class="col-2">
+              <p>acid reflux</p>
+          </div>
+          <div class="col-2">
+              <p>cataracts</p>
+          </div>
+          <div class="col-2">
+              <p>heart disease</p>
+          </div>
+          <div class="col-2">
+            <p>crohns</p>
+          </div>
+          <div class="col-2">
+              <p>alcohol/drugs</p>
+          </div>
+          <div class="col-2">
+              <p>heart valve issues</p>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-2">
+              <p>mental health</p>
+          </div>
+          <div class="col-2">
+              <p>allergies</p>
+          </div>
+          <div class="col-2">
+              <p>chronic pain</p>
+          </div>
+          <div class="col-2">
+              <p>hernia</p>
+          </div>
+          <div class="col-2">
+              <p>M.R.S.A</p>
+          </div>
+          <div class="col-2">
+            <p>anemia</p>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+          <p>depression</p>
+        </div>
+        <div class="col-2">
+          <p>anxiety</p>
+        </div>
+        <div class="col-2">
+          <p>blood pressure</p>
+        </div>
+        <div class="col-2">
+          <p>osteoporosis</p>
+        </div>
+        <div class="col-2">
+          <p>artery issues</p>
+        </div>
+        <div class="col-2">
+          <p>vein issues</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+            <p>diabetes</p>
+        </div>
+        <div class="col-2">
+          <p>high cholesterol</p>
+        </div>
+        <div class="col-2">
+          <p>arthritis</p>
+        </div>
+        <div class="col-2">
+          <p>skin infection</p>
+        </div>
+        <div class="col-2">
+          <p>esophagus issues</p>
+        </div>
+        <div class="col-2">
+          <p>ulcers</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+          <p>HIV</p>
+        </div>
+        <div class="col-2">
+          <p>UTI</p>
+        </div>
+        <div class="col-2">
+          <p>asthma</p>
+        </div>
+        <div class="col-2">
+          <p>sleep apnea</p>
+        </div>
+        <div class="col-2">
+          <p>fractures</p>
+        </div>
+        <div class="col-2">
+          <p>irritable bowels</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+          <p>autoimmune disease</p>
+        </div>
+        <div class="col-2">
+          <p>seizures</p>
+        </div>
+        <div class="col-2">
+          <p>gallstones</p>
+        </div>
+        <div class="col-2">
+          <p>kidney disease</p>
+        </div>
+        <div class="col-2">
+          <p>STI</p>
+        </div>
+        <div class="col-2">
+          <p>thyroid issues</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+          <p>lung disease</p>
+        </div>
+        <div class="col-2">
+          <p>headaches</p>
+        </div>
+        <div class="col-2">
+          <p>cancer</p>
+        </div>
+        <div class="col-2">
+          <p>tubercolosis</p>
+        </div>
+        <div class="col-2">
+          <p>blood clots</p>
+        </div>
+        <div class="col-2">
+          <p>stroke</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
+          <p>gout</p>
+        </div>
+        <div class="col-2">
+          <p>liver disease</p>
+        </div>
+        <div class="col-2">
+          <p>hepatitis</p>
+        </div>
+        <div class="col-2">
+          <p>glaucoma</p>
+        </div>
+        <div class="col-2">
+          <p>bleeding</p>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+    <div class="col-6">
+        <label for="health-conditions">List your ailments and health conditions below:</label><br>
+        <textarea name="health-conditions" style="width: 500px;height: 100px;" placeholder="List conditions here">{{ patientHistory[3] }}</textarea>
+        <label for="medication">Are you taking any medication? If so, list them below.</label><br>
+        <textarea name="medication" style="width: 500px;height: 100px;" placeholder="List medications here">{{ patientHistory[4] }}</textarea>
+    </div>
+    <div class="col-4">
+        <BR>
+        <button type="submit" class="btn btn-primary" value="Submit Form">Submit Changes</button><BR><BR>
+    </div>
+    </div>
+  <br><br>
+    </form>
+
+{% endblock %}
+
