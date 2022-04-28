@@ -1,0 +1,257 @@
+.navPanelWrapper{
+
+    height: auto;
+    width: 200px;
+}
+
+.navPanelImage {
+
+    height: 150px;
+    width: 100%;
+}
+
+.paddingTop{
+    padding-top: 7px;
+}
+
+body {
+}
+
+.redText {
+    color: red;
+}
+
+.completeWrapper{
+
+
+}
+
+
+.topRibbon {
+    background-color: darkgrey;
+    border: black;
+    border-style: solid;
+    font-size: x-small;
+
+}
+
+.navPanel{
+    background-color: darkgrey;
+    padding: 10px;
+}
+
+.contentPanel {
+    overflow: no-display;
+    padding-left: 15px;
+    padding-top: 40px;
+
+}
+
+
+
+
+.navPanelExtender {
+    height: 500px;
+}
+
+
+
+.menuBackgound{
+  background-color: green;
+}
+
+.siteBackground{
+  background-color: lightgrey;
+}
+
+
+.navButtonSpan{
+
+    background-color: #0a53be;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hiddenSection {
+    display: none;
+}
+
+.visibleSection {
+    display: block;
+}
+
+.backgroundClass {
+    height: 780px;
+    width: 870px;
+    background-color: darkgrey;
+    border: black;
+    border-style: double;
+    align-content: center;
+
+}
+
+.bodyStyle{
+    background-color: cornflowerblue;
+
+    padding: 55px;
+    padding-left: 400px;
+
+}
+.listClassExample{
+    font-family: "Comic Sans MS";
+}
+
+.topWrapper {
+    border:  black;
+    border-left-color: lightgreen;
+    border-right-color: lightgreen;
+    border-top-color: lightgreen;
+    border-style: solid;
+
+}
+
+.activeLink {
+    color: grey;
+    text-emphasis: olivedrab;
+    font-family: Calibri;
+    font-size: xx-large;
+    display: inline-block;
+    padding-left: 20px;
+}
+
+.inactiveLink {
+    cursor: pointer;
+    color: green;
+    font-size: xx-large;
+    font-family: Calibri;
+    display: inline-block;
+    padding-left: 20px;
+}
+
+.titleName {
+    color: black;
+    text-align: left;
+    background-color: lightgreen;
+    width: 100%;
+
+
+}
+
+.horiz {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.sectionWrapper{
+    display: flex;
+    justify-content: center;
+    scroll-behavior: smooth;
+
+}
+.section {
+    background-color: olivedrab;
+    border-style: double;
+    width: 75%;
+    height: 600px;
+}
+.contactHeader{
+    font-size: xxx-large;
+}
+.contactContents{
+    font-size: x-large;
+
+}
+
+.tableData{
+    width: 33%;
+    height: 33%;
+}
+
+.tdImage{
+    width: 100%;
+    height: 100%;
+}
+
+.menu {
+
+    background-color: lightgreen;
+}
+
+.shortTextInput{
+
+}
+
+.disabledInput{
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.showEmailLink {
+    cursor: pointer;
+    color: blue;
+}
+
+.secondaryHeader{
+    font-size: x-large;
+}
+
+
+.profilePic{
+    height: 175px;
+    width: 175px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a:link, a:visited {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover, a:active {
+    text-decoration: none;
+    color: white;
+}
