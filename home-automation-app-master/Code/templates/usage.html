@@ -1,0 +1,932 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container">    
+        <canvas id="myChart" width="1300" height="600" style = "background-color: #F1FAEE; font-family: futura;"></canvas>
+        <hr>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 text-left">
+                    <button class="btn btn-danger" style="font-family: futura;" id="power">Power</button>
+                    <button class="btn btn-primary" style="font-family: futura;" id="water">Water</button>
+                    <button class="btn btn-success" style="font-family: futura;" id="cost">Cost</button>
+                    <button class="btn btn-secondary" style="font-family: futura;" id="all">All</button>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" style="font-family: futura;" id="day">Day</button>
+                    <button class="btn btn-primary" style="font-family: futura;" id="week">Week</button>
+                    <button class="btn btn-primary" style="font-family: futura;" id="month">Month</button>
+                    <button class="btn btn-primary dropdown-toggle" style="font-family: futura;" aria-expanded="false" data-bs-toggle="dropdown" type="button">Compare </button>
+                        <div class="dropdown-menu" style="font-family: futura;" ><a class="dropdown-item" id="firstMonth" href="#">First Item</a><a class="dropdown-item" id="secondMonth" href="#">Second Item</a><a class="dropdown-item" id="thirdMonth" href="#">Third Item</a></div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="card shadow border-start-success py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Total Power Usage</span></div>
+                                    <div class="text-dark fw-bold h5 mb-0"><span id="powerLabel">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4 offset-xl-0 mb-4">
+                    <div class="card shadow border-start-success py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total Water Usage</span></div>
+                                    <div class="text-dark fw-bold h5 mb-0"><span id="waterLabel">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4 offset-xl-0 mb-4">
+                    <div class="card shadow border-start-success py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Total Cost (USD)</span></div>
+                                    <div class="text-dark fw-bold h5 mb-0"><span id="costLabel">$20</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    //#region page setup
+    //track the current time and data selection
+    var timeSel = "day";
+    var dataSel = "all";
+    //connect buttons to functions
+    const powerButton = document.getElementById('power');
+    powerButton.addEventListener('click', chartPower);
+    const waterButton = document.getElementById('water');
+    waterButton.addEventListener('click', chartWater);
+    const costButton = document.getElementById('cost');
+    costButton.addEventListener('click', chartCost);
+    const dayButton = document.getElementById('day');
+    dayButton.addEventListener('click', chartDay);
+    const weekButton = document.getElementById('week');
+    weekButton.addEventListener('click', chartWeek);
+    const monthButton = document.getElementById('month');
+    monthButton.addEventListener('click', chartMonth);
+    const allButton = document.getElementById('all');
+    allButton.addEventListener('click', chartAll);
+
+    //set dropdown menu items to the 3 previous months
+    const firstMonth = document.getElementById('firstMonth');
+    const secondMonth = document.getElementById('secondMonth');
+    const thirdMonth = document.getElementById('thirdMonth');
+    firstMonth.addEventListener('click', chartHistoryMonth1);
+    secondMonth.addEventListener('click', chartHistoryMonth2);
+    thirdMonth.addEventListener('click', chartHistoryMonth3);
+
+    var date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    var month = date.toLocaleString('default', { month: 'long' });
+    var year = date.getFullYear();
+    firstMonth.innerHTML = month+" "+year;
+    date.setMonth(date.getMonth() - 1);
+    month = date.toLocaleString('default', { month: 'long' });
+    year = date.getFullYear();
+    secondMonth.innerHTML = month+" "+year;
+    date.setMonth(date.getMonth() - 1);
+    month = date.toLocaleString('default', { month: 'long' });
+    year = date.getFullYear();
+    thirdMonth.innerHTML = month+" "+year;
+
+    //change labels to total usage
+    var powerLabel = document.getElementById('powerLabel');
+    powerLabel.innerHTML = "{{ totalPower }}"+" KwH";
+    var waterLabel = document.getElementById('waterLabel');
+    waterLabel.innerHTML = "{{ totalWater }}"+" gal";
+    var costLabel = document.getElementById('costLabel');
+    //calculate cost from total power and water usage
+    var totalCost = (({{ totalPower }} * 0.12) + ({{ totalWater }} / 748 * 2.52));
+    costLabel.innerHTML = "$" + totalCost.toFixed(2);
+    
+    const dashDay = (ctx, value) => ctx.p0DataIndex >= {{dayUsage[4] | safe}} ? value : [6, 0];
+    const dashWeek = (ctx, value) => ctx.p0DataIndex >= {{weekUsage[4] | safe}} ? value : [6, 0];
+    const dashMonth = (ctx, value) => ctx.p0DataIndex >= {{monthUsage[4] | safe}} ? value : [6, 0];
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{dayUsage[0] | safe}},
+            datasets: [{
+                label: '24 HR Power Usage (KwH)',
+                data: {{dayUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '24 HR Water Usage (gal)',
+                data: {{dayUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '24 HR Cost ($USD)',
+                data: {{dayUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }
+        ]
+        },
+        options: {
+            responsive: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: "rgba(0,0,0,1)",
+                        font: {
+                            size: 16,
+                            weight: "bold"
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: "rgba(0,0,0,1)",
+                        font: {
+                            size: 16,
+                            weight: "bold"
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        filter: function(legendItem, chartData) {
+                            // Hide labels that contain the word "previous"
+                            return !legendItem.text.includes('Previous');
+                        }
+                    }
+                }
+            }
+        }
+    });
+    //#endregion
+
+    //#region history month functions
+    //function to show dotted line historical values from the previous month
+    function chartHistoryMonth1() {
+        timeSel = "month";
+        dataSel = "all";
+        myChart.data.labels = {{monthUsage[0] | safe}};
+        myChart.data.datasets = [{
+            label: '30 Day Power Usage (KwH)',
+            //use only values with index before monthUsage[4]
+            data: {{monthUsage[1] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(220,53,69,255)",
+            borderColor: "rgba(220,53,69,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+            }
+        }, {
+            label: '30 Day Water Usage (gal)',
+            data: {{monthUsage[2] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(13,110,253,255)",
+            borderColor: "rgba(13,110,253,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+            }
+        }, {
+            label: '30 Day Cost ($USD)',
+            data: {{monthUsage[3] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(25,135,84,255)",
+            borderColor: "rgba(25,135,84,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+            }
+        }, {
+            label: "Previous Power Usage (KwH)",
+            data: {{historyMonth1[0] | safe}},
+            fill: false,
+            backgroundColor: "rgba(220,53,69,255)",
+            borderColor: "rgba(220,53,69,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }, {
+            label: "Previous Water Usage (gal)",
+            data: {{historyMonth1[1] | safe}},
+            fill: false,
+            backgroundColor: "rgba(13,110,253,255)",
+            borderColor: "rgba(13,110,253,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }, {
+            label: "Previous Cost ($USD)",
+            data: {{historyMonth1[2] | safe}},
+            fill: false,
+            backgroundColor: "rgba(25,135,84,255)",
+            borderColor: "rgba(25,135,84,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }];
+        myChart.options.scales.x.ticks.color = "rgba(0,0,0,1)";
+        myChart.options.scales.y.ticks.color = "rgba(0,0,0,1)";
+        myChart.update();
+    }
+
+    function chartHistoryMonth2() {
+        timeSel = "month";
+        dataSel = "all";
+        myChart.data.datasets = [{
+            label: '30 Day Power Usage (KwH)',
+            data: {{monthUsage[1] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(220,53,69,255)",
+            borderColor: "rgba(220,53,69,255)",
+            borderWidth: 1
+        }, {
+            label: '30 Day Water Usage (gal)',
+            data: {{monthUsage[2] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(13,110,253,255)",
+            borderColor: "rgba(13,110,253,255)",
+            borderWidth: 1
+        }, {
+            label: '30 Day Cost ($USD)',
+            data: {{monthUsage[3] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(25,135,84,255)",
+            borderColor: "rgba(25,135,84,255)",
+            borderWidth: 1
+        }, {
+            label: "Previous Power Usage (KwH)",
+            data: {{historyMonth2[0] | safe}},
+            fill: false,
+            backgroundColor: "rgba(220,53,69,255)",
+            borderColor: "rgba(220,53,69,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }, {
+            label: "Previous Water Usage (gal)",
+            data: {{historyMonth2[1] | safe}},
+            fill: false,
+            backgroundColor: "rgba(13,110,253,255)",
+            borderColor: "rgba(13,110,253,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }, {
+            label: "Previous Cost ($USD)",
+            data: {{historyMonth2[2] | safe}},
+            fill: false,
+            backgroundColor: "rgba(25,135,84,255)",
+            borderColor: "rgba(25,135,84,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }];
+        myChart.data.labels = {{monthUsage[0] | safe}};
+        myChart.options.scales.x.ticks.color = "rgba(0,0,0,1)";
+        myChart.options.scales.y.ticks.color = "rgba(0,0,0,1)";
+        myChart.update();
+    }
+
+    function chartHistoryMonth3() {
+        timeSel = "month";
+        dataSel = "all";
+        myChart.data.labels = {{monthUsage[0] | safe}};
+        myChart.data.datasets = [{
+            label: '30 Day Power Usage (KwH)',
+            data: {{monthUsage[1] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(220,53,69,255)",
+            borderColor: "rgba(220,53,69,255)",
+            borderWidth: 1
+        }, {
+            label: '30 Day Water Usage (gal)',
+            data: {{monthUsage[2] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(13,110,253,255)",
+            borderColor: "rgba(13,110,253,255)",
+            borderWidth: 1
+        }, {
+            label: '30 Day Cost ($USD)',
+            data: {{monthUsage[3] | safe}}.splice(0, ({{monthUsage[4] | safe}} + 1)),
+            fill: false,
+            backgroundColor: "rgba(25,135,84,255)",
+            borderColor: "rgba(25,135,84,255)",
+            borderWidth: 1
+        }, {
+            label: "Previous Power Usage (KwH)",
+            data: {{historyMonth3[0] | safe}},
+            fill: false,
+            backgroundColor: "rgba(220,53,69,255)",
+            borderColor: "rgba(220,53,69,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }, {
+            label: "Previous Water Usage (gal)",
+            data: {{historyMonth3[1] | safe}},
+            fill: false,
+            backgroundColor: "rgba(13,110,253,255)",
+            borderColor: "rgba(13,110,253,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }, {
+            label: "Previous Cost ($USD)",
+            data: {{historyMonth3[2] | safe}},
+            fill: false,
+            backgroundColor: "rgba(25,135,84,255)",
+            borderColor: "rgba(25,135,84,255)",
+            borderWidth: 1,
+            segment: {
+                borderDash: [6, 6]
+            }
+        }];
+        myChart.options.scales.x.ticks.color = "rgba(0,0,0,1)";
+        myChart.options.scales.y.ticks.color = "rgba(0,0,0,1)";
+        myChart.update();
+    }
+    //#endregion
+    
+    //#region chart power, water, cost functions
+    //function to change the chart to day power usage
+    function chartPower() {
+        dataSel = "power";
+        if (timeSel == "day") {
+            myChart.data.datasets = [{
+                label: '24 HR Power Usage (KwH)',
+                data: {{dayUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Power Usage (KwH)";
+        } else if (timeSel == "week") {
+            myChart.data.datasets = [{
+                label: '7 Day Power Usage (KwH)',
+                data: {{weekUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Power Usage (KwH)";
+        } else if (timeSel == "month") {
+            myChart.data.datasets = [{
+                label: '30 Day Power Usage (KwH)',
+                data: {{monthUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Power Usage (KwH)";
+        }
+        myChart.data.datasets[0].backgroundColor = "rgba(220,53,69,255)";
+        myChart.data.datasets[0].borderColor = "rgba(220,53,69,255)";
+        myChart.options.scales.y.ticks.color = "rgba(220,53,69,255)";
+        myChart.options.scales.x.ticks.color = "rgba(220,53,69,255)";
+        myChart.update();
+    };
+
+    //function to change the chart to day water usage
+    function chartWater() {
+        dataSel = "water";
+        if (timeSel == "day") {
+            myChart.data.datasets = [{
+                label: '24 HR Water Usage (gal)',
+                data: {{dayUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Water Usage (gal)";
+        } else if (timeSel == "week") {
+            myChart.data.datasets = [{
+                label: '7 Day Water Usage (gal)',
+                data: {{weekUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Water Usage (gal)";
+        } else if (timeSel == "month") {
+            myChart.data.datasets = [{
+                label: '30 Day Water Usage (gal)',
+                data: {{monthUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Water Usage (gal)";
+        }
+        myChart.data.datasets[0].backgroundColor = "rgba(13,110,253,255)";
+        myChart.data.datasets[0].borderColor = "rgba(13,110,253,255)";
+        myChart.options.scales.y.ticks.color = "rgba(13,110,253,255)";
+        myChart.options.scales.x.ticks.color = "rgba(13,110,253,255)";
+        myChart.update();
+    };
+
+    //function to change the chart to day cost usage
+    function chartCost() {
+        dataSel = "cost";
+        if (timeSel == "day") {
+            myChart.data.datasets = [{
+                label: '24 HR Cost ($USD)',
+                data: {{dayUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Cost (USD)";
+        } else if (timeSel == "week") {
+            myChart.data.datasets = [{
+                label: '7 Day Cost ($USD)',
+                data: {{weekUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Cost (USD)";
+        } else if (timeSel == "month") {
+            myChart.data.datasets = [{
+                label: '30 Day Cost ($USD)',
+                data: {{monthUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Cost (USD)";
+        }
+        myChart.data.datasets[0].backgroundColor = "rgba(25,135,84,255)";
+        myChart.data.datasets[0].borderColor = "rgba(25,135,84,255)";
+        myChart.options.scales.y.ticks.color = "rgba(25,135,84,255)";
+        myChart.options.scales.x.ticks.color = "rgba(25,135,84,255)";
+        myChart.update();
+    };
+    //#endregion
+
+    //#region chartAll function
+    function chartAll() {
+        dataSel = "all";
+        if (timeSel == "day") {
+            myChart.data.datasets = [{
+                label: '24 HR Power Usage (KwH)',
+                data: {{dayUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '24 HR Water Usage (gal)',
+                data: {{dayUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '24 HR Cost ($USD)',
+                data: {{dayUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Power Usage (KwH)";
+            myChart.data.datasets[1].label = "24 HR Water Usage (Gallons)";
+            myChart.data.datasets[2].label = "24 HR Cost (USD)";
+        } else if (timeSel == "week") {
+            myChart.data.datasets = [{
+                label: '7 Day Power Usage (KwH)',
+                data: {{weekUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '7 Day Water Usage (gal)',
+                data: {{weekUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '7 Day Cost ($USD)',
+                data: {{weekUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Power Usage (KwH)";
+            myChart.data.datasets[1].label = "7 Day Water Usage (Gallons)";
+            myChart.data.datasets[2].label = "7 Day Cost (USD)";
+        } else if (timeSel == "month") {
+            myChart.data.datasets = [{
+                label: '30 Day Power Usage (KwH)',
+                data: {{monthUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '30 Day Water Usage (gal)',
+                data: {{monthUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '30 Day Cost ($USD)',
+                data: {{monthUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Power Usage (KwH)";
+            myChart.data.datasets[1].label = "30 Day Water Usage (Gallons)";
+            myChart.data.datasets[2].label = "30 Day Cost (USD)";
+        }
+        myChart.options.scales.x.ticks.color = "rgba(0,0,0,1)";
+        myChart.options.scales.y.ticks.color = "rgba(0,0,0,1)";
+        myChart.update();
+    };
+
+    //#endregion
+
+    //#region chart day, week, month functions
+    //function to change time selection to day
+    function chartDay() {
+        timeSel = "day";
+        if (dataSel == "water") {
+            myChart.data.datasets = [{
+                label: '24 HR Water Usage (gal)',
+                data: {{dayUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Water Usage (gal)";
+        } else if (dataSel == "power") {
+            myChart.data.datasets = [{
+                label: '24 HR Power Usage (KwH)',
+                data: {{dayUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Power Usage (KwH)";
+        } else if (dataSel == "cost") {
+            myChart.data.datasets = [{
+                label: '24 HR Cost ($USD)',
+                data: {{dayUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Cost (USD)";
+        } else if (dataSel == "all") {
+            myChart.data.datasets = [{
+                label: '24 HR Power Usage (KwH)',
+                data: {{dayUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '24 HR Water Usage (gal)',
+                data: {{dayUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '24 HR Cost ($USD)',
+                data: {{dayUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashDay(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{dayUsage[0] | safe}};
+            myChart.data.datasets[0].label = "24 HR Power Usage (KwH)";
+            myChart.data.datasets[1].label = "24 HR Water Usage (gal)";
+            myChart.data.datasets[2].label = "24 HR Cost (USD)";
+        }
+        myChart.update();
+    }
+
+    //function to change time selection to week
+    function chartWeek() {
+        timeSel = "week";
+        if (dataSel == "water") {
+            myChart.data.datasets = [{
+                label: '7 Day Water Usage (gal)',
+                data: {{weekUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Water Usage (gal)";
+        } else if (dataSel == "power") {
+            myChart.data.datasets = [{
+                label: '7 Day Power Usage (KwH)',
+                data: {{weekUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Power Usage (KwH)";
+        } else if (dataSel == "cost") {
+            myChart.data.datasets = [{
+                label: '7 Day Cost ($USD)',
+                data: {{weekUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Cost (USD)";
+        } else if (dataSel = "all") {
+            myChart.data.datasets = [{
+                label: '7 Day Power Usage (KwH)',
+                data: {{weekUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '7 Day Water Usage (gal)',
+                data: {{weekUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '7 Day Cost ($USD)',
+                data: {{weekUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashWeek(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{weekUsage[0] | safe}};
+            myChart.data.datasets[0].label = "7 Day Power Usage (KwH)";
+            myChart.data.datasets[1].label = "7 Day Water Usage (gal)";
+            myChart.data.datasets[2].label = "7 Day Cost (USD)";
+        }
+        myChart.update();
+    }
+
+    //function to change time selection to month
+    function chartMonth() {
+        timeSel = "month";
+        if (dataSel == "water") {
+            myChart.data.datasets = [{
+                label: '30 Day Water Usage (gal)',
+                data: {{monthUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Water Usage (gal)";
+        } else if (dataSel == "power") {
+            myChart.data.datasets = [{
+                label: '30 Day Power Usage (KwH)',
+                data: {{monthUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Power Usage (KwH)";
+        } else if (dataSel == "cost") {
+            myChart.data.datasets = [{
+                label: '30 Day Cost ($USD)',
+                data: {{monthUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Cost (USD)";
+        } else if (dataSel = "all") {
+            myChart.data.datasets = [{
+                label: '30 Day Power Usage (KwH)',
+                data: {{monthUsage[1] | safe}},
+                fill: false,
+                backgroundColor: "rgba(220,53,69,255)",
+                borderColor: "rgba(220,53,69,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '30 Day Water Usage (gal)',
+                data: {{monthUsage[2] | safe}},
+                fill: false,
+                backgroundColor: "rgba(13,110,253,255)",
+                borderColor: "rgba(13,110,253,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }, {
+                label: '30 Day Cost ($USD)',
+                data: {{monthUsage[3] | safe}},
+                fill: false,
+                backgroundColor: "rgba(25,135,84,255)",
+                borderColor: "rgba(25,135,84,255)",
+                borderWidth: 1,
+                segment: {
+                    borderDash: ctx => dashMonth(ctx, [6, 6]) || [6,0]
+                }
+            }]
+            myChart.data.labels = {{monthUsage[0] | safe}};
+            myChart.data.datasets[0].label = "30 Day Power Usage (KwH)";
+            myChart.data.datasets[1].label = "30 Day Water Usage (gal)";
+            myChart.data.datasets[2].label = "30 Day Cost (USD)";
+        }
+        myChart.update();
+    }
+
+    //#endregion  
+    </script>
+</div>
+<!-- <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script> -->
+{% endblock %}

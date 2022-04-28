@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>CS499 Home App</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Login-Form-Clean.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Login-Form-Dark.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Newsletter-Subscription-Form-1.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Newsletter-Subscription-Form.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+
+<body style="text-align: center;box-shadow: 0px 0px 15px;">
+    <section class="newsletter-subscribe overflow-hidden">
+        <div class="container">
+            <img class="justify-content-center" src="{{url_for('static', filename='img/projlogo.png')}}">
+            <div class="intro">
+                <h2 class="text-center">Welcome to your new home!</h2>
+                <p class="text-center">Please provide a name for your new home and jump into an experience unlike any other! This is HomeControl.</p>
+            </div>
+            <form class="d-flex justify-content-center flex-wrap" method="post">
+                {{ form.add_home.hidden_tag() }}
+                <div class="mb-3">
+                <!-- {{ form.add_home.home_name.label(class_='form-label') }} -->
+                    {{ form.add_home.home_name(class_='form-control', placeholder='Home Name') }}
+                </div>
+                <div class="mb-3">
+                    {{ form.add_home.submit(class='btn btn-primary') }}
+                </div>
+            </form>
+        </div>
+    </section>
+    <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script>
+</body>
+
+</html>

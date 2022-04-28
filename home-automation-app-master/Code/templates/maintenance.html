@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert-dismissible alert-success text-center">
+    <h5 id="alert_message"></h5>
+</div>
+<div class="container">
+    <div class="d-flex dropdown justify-content-end">
+        <button class="btn btn-secondary dropdown-toggle" style = "background-color: #E63946;" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          Scenes
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" id="shower" href="#">Take Shower</a></li>
+            <li><a class="dropdown-item" id="dishwasher" href="#">Run Dishwasher</a></li>
+            <li><a class="dropdown-item" id="party" href="#">Have a Party!!!</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        {% for room in rooms_list %}
+        <div class="col" style="height: 350px; width: 250px;">
+            <legend style="color: #457B9D; font-family: futura; font-size: 16pt;">{{room.name}}</legend>
+            <div class="col overflow-auto" style="height: 300px; width: 250px;">
+                {% for item in items_list %}
+                {% if item.room_id == room.id %}
+                <div class="justify-content-center">
+                    <!--toggle label --> 
+                    <legend style="color: #1D3557; font-family: futura; font-size: 12pt;">{{item.name}}</legend>
+                    <div class="toggle">
+                        {% if item.type == "light" or item.type == "power" or item.type == "water" and item.name != "HVAC" %}
+                        {% if item.status == True %}
+                        <input class="selection" type="radio" id="true_{{item.id}}" name="{{item.name}}{{item.id}}" checked="checked">
+                        {% else %}
+                        <input class="selection" type="radio" id="true_{{item.id}}" name="{{item.name}}{{item.id}}">
+                        {% endif %}
+                        <!--toggle on--> 
+                        <label class="form-label" style="color: #F1FAEE; font-family: futura; font-size: 8pt;" for="true_{{item.id}}">On</label>
+                        {% if item.status == False %}
+                        <input class="selection" type="radio" id="false_{{item.id}}" name="{{item.name}}{{item.id}}" checked="checked">
+                        {% else %}
+                        <input class="selection" type="radio" id="false_{{item.id}}" name="{{item.name}}{{item.id}}">
+                        {% endif %}
+                        <!--toggle off--> 
+                        <label class="form-label" style="color: #F1FAEE; font-family: futura; font-size: 8pt;" for="false_{{item.id}}">Off</label>
+                        {% endif %}
+                        {% if item.type == "opening" %}
+                        {% if item.status == True %}
+                        <input class="selection" type="radio" id="true_{{item.id}}"  name="{{item.name}}{{item.id}}" checked="checked">
+                        {% else %}
+                        <input class="selection" type="radio" id="true_{{item.id}}" name="{{item.name}}{{item.id}}">
+                        {% endif %}
+                        <!--toggle open-->
+                        <label class="form-label" style="color: #F1FAEE; font-family: futura; font-size: 8pt;" for="true_{{item.id}}">Open</label>
+                        {% if item.status == False %}
+                        <input class="selection" type="radio" id="false_{{item.id}}" name="{{item.name}}{{item.id}}" checked="checked">
+                        {% else %}
+                        <input class="selection" type="radio" id="false_{{item.id}}" name="{{item.name}}{{item.id}}">
+                        {% endif %}
+                        <!--toggle closed-->
+                        <label class="form-label" style="color: #F1FAEE; font-family: futura; font-size: 8pt;" for="false_{{item.id}}">Closed</label>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.toggle').change(function() {
+            console.log($(this));
+            var id = $(this).find('.selection').attr('id');
+            var name = $(this).find('.selection').attr('name');
+            var state = $(this).find('[id^=true]').is(':checked');
+            var data = {
+                'id': id,
+                'name': name,
+                'state': state
+            };
+            $.ajax({
+                type: 'GET',
+                url: '/maintenance/toggle',
+                data: data,
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('.dropdown-item').click(function() {
+            console.log($(this));
+            var id = $(this).attr('id');
+            var data = {
+                'id': id,
+            };
+            $.ajax({
+                type: 'GET',
+                url: '/maintenance/scenes',
+                data: data,
+                success: function(msg) {
+                    $('#alert_message').text(msg);
+                    setTimeout(function() {
+                        $('#alert_message').hide();
+                    }, 3000);
+                    setTimeout(function() {
+                        window.location.assign('/maintenance');
+                    }, 3000);
+                    console.log(msg);
+                }
+            });
+        });
+    });
+</script>
+<!-- <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script> -->
+{% endblock %}

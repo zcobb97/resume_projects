@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Navigation-Clean.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Newsletter-Subscription-Form.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Toggle-Switches.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Team-1.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Team.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+    
+    <title>CS499 SP22 Smart Home App</title>
+  </head>
+  <body style = "background-color: #F1FAEE;">
+    <nav class="navbar navbar-custom navbar-light navbar-expand-lg navigation-clean" style = "background-color: #1D3557;" .navbar-custom = "height: 106;">
+      <div class="container"><a class="navbar-brand"  href="{{url_for('dashboard')}}"><img class ="logo" style = "position: sticky; width: 250; height: 53;" src = "{{url_for('static', filename='img/projlogo.png')}}"></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="navcol-1">
+              <ul class="navbar-nav ms-auto">
+                  <li class="nav-item"><a class="nav-link" style = "color: #F1FAEE; font-family: futura;" href="{{url_for('dashboard')}}">Dashboard</a></li>
+                  <li class="nav-item"><a class="nav-link" style = "color: #F1FAEE; font-family: futura;" href="{{url_for('usage')}}">Usage</a></li>
+                  <li class="nav-item"><a class="nav-link" style = "color: #F1FAEE; font-family: futura;" href="{{url_for('maintenance')}}">Maintenance</a></li>
+                  <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" style = "color: #F1FAEE; font-family: futura;" aria-expanded="false" data-bs-toggle="dropdown" href="#">More Info </a>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{url_for('members')}}">Member Info</a>
+                      </div>
+                  </li>
+              </ul>
+          </div>
+      </div>
+    </nav>
+    {% block content %}
+
+    {% endblock %}
+  </body>
+
+</html>

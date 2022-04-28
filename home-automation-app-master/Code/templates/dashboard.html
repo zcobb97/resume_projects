@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% for item in item_icons %}
+            {% if item.type == "light" %}
+            {% if item.status == True %}
+            <img class="light" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px; cursor: pointer;" src="{{url_for('static', filename='img/lightbulb_on.png')}}">
+            {% else %}
+            <img class="light" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px; cursor: pointer;" src="{{url_for('static', filename='img/lightbulb_off.png')}}">
+            {% endif %}
+            {% endif %}
+            {% if item.type == "power" %}
+            {% if item.status == True %}
+            <img class="power" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px;" src="{{url_for('static', filename='img/on.png')}}">
+            {% else %}
+            <img class="power" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px;" src="{{url_for('static', filename='img/off.png')}}">
+            {% endif %}
+            {% endif %}
+            {% if item.type == "water" %}
+            {% if item.status == True %}
+            <img class="water" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px;" src="{{url_for('static', filename='img/water_on.png')}}">
+            {% else %}
+            <img class="water" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px;" src="{{url_for('static', filename='img/water_off.png')}}">
+            {% endif %}
+            {% endif %}
+            {% if item.type == "opening" %}
+            {% if item.status == True %}
+            <img class="opening" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px;" src="{{url_for('static', filename='img/open.png')}}">
+            {% else %}
+            <img class="opening" id="{{item.id}}" title="{{item.name}}" style="position: absolute; width: 26px; height: 26px; top: {{item.y_pos}}px; left: {{item.x_pos}}px;" src="{{url_for('static', filename='img/closed.png')}}">
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <img class="img-fluid d-lg-flex" src="{{url_for('static', filename='img/FloorplanCS499.png')}}">
+        </div>
+        <div class="col-md-4 justify-content-center" style="text-align: center;" id="hvac_bg" >
+            <h3 style="color: black; font-family: futura; text-align: center; padding-bottom: 20px; margin-top: 50px;">{{ home_name }}</h3>
+            <div class="row text-center justify-content-center" style="box-shadow:10px 5px 5px rgba(29, 53, 87, 0.5); border-radius: 30px;">
+                <div class="col-md-6 flex-column justify-content-center">
+                    <div>
+                        <form style="color: black; font-family: futura; --min:${min};--max:${max};--val:${val};">
+                            <input id="temp" type="range" min="50" max="90" value="{{ hvac.setpoint }}" style = "color-scheme: #E63946;"/>
+                            <output for="temp"><h1>{{ hvac.setpoint }}</h1></output><br>
+                            <label class="hvac_mode" for="temp">{{ hvac.mode }}</label>
+                            <div class="d-flex">
+                                <button class="hvac_control" id="decrease" style="color: #F1FAEE; background-color: #1D3557; font-family: futura; --s:-1;">decrease temperature</button>
+                                <button class="hvac_control" id="increase" style="color: #F1FAEE; background-color: #E63946; font-family: futura; --s:1;">increase temperature</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row align-content-center">
+                        <div class="text-start d-lg-flex justify-content-lg-start col-md-8">
+                            <h6 class="justify-content-start" style = "color: black; font-family: futura; margin-top: 20px; margin-right: 10px;">Outdoor Temp:</h6>
+                            <h3 class="justify-content-end" style = "color: black; font-family: futura; margin-top: 20px;">{{curr.temp}}°F</h3>
+                        </div>
+                        <div class="text-start d-lg-flex justify-content-lg-start col-md-8">
+                            <h6 class="justify-content-start" style = "color: black; font-family: futura; margin-right: 20px;">Indoor Temp:</h6>
+                            <h3 class="justify-content-end" id="indoortemp" style = "color: black; font-family: futura;">{{indoor_temp}}°F</h3>
+                        </div>
+                        <div class="text-start d-lg-flex justify-content-lg-start col-md-8">
+                            <h6 class="justify-content-start" style = "color: black; font-family: futura; margin-top: 5px; margin-right: 5px;">Humidity:</h6>
+                            <h3 class="justify-content-end" style = "color: black; font-family: futura;">{{curr.humidity}}%</h3>
+                        </div>
+                    </div>      
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.light').click(function() {
+            var id = $(this).attr('id');
+            var data = {
+                'id': id,
+            };
+            $.ajax({
+                type: 'GET',
+                url: '/dashboard/action',
+                data: data,
+                success: function(data) {
+                    window.location.assign('/dashboard');
+                    console.log(data);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    var x = setInterval(updateIDTemp, 30000)
+    function updateIDTemp() {
+        var data = {
+            'id': 'indoortemp',
+        };
+        $.ajax({
+            type: 'GET',
+            url: '/dashboard/hvac_update',
+            data: data,
+            success: function(temp) {
+                $('#indoortemp').text(temp + '°F');
+                console.log(temp);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        $('.hvac_control').click(function() {
+            var id = $(this).attr('id');
+            var data = {
+                'id': id,
+            };
+            $.ajax({
+                type: 'GET',
+                url: '/dashboard/hvac',
+                data: data,
+                success: function(data) {
+                    window.location.assign('/dashboard');
+                    //$("#hvac_bg").load(location.href+" #hvac_bg>*","");
+                    console.log(data);
+                }
+            });
+            return false;
+        });
+    })
+</script>
+<!-- <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script> -->
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="newsletter-subscribe overflow-hidden justify-content-center align-content-center" style="background-color: transparent;">
+    <h1 class="text-center">Loading usage data... Please Wait</h1>
+    <div class="loader align-content-center"></div>
+</section>
+<script>
+    $(document).ready(function() {
+        setTimeout(function() {
+            window.location.assign('/usage');
+        }, 10000);
+    });
+</script>
+{% endblock %}
